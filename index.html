@@ -29,6 +29,15 @@
 <input id="q" placeholder="検索ワードを入力">
 <button onclick="search()">検索</button>
 
+<script>
+document.getElementById("q").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    search();
+  }
+});
+</script>
+
 <div id="results"></div>
 
 <script>
@@ -67,6 +76,21 @@ async function search() {
     });
   }
 }
+
+</script>
+
+<script>
+document.getElementById("q").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    search();
+  }
+});
+</script>
+
+</body>
+</html>
+
 </script>
 
 </body>

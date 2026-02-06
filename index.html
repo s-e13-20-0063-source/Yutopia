@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Utopia Search</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+  #results { margin-top: 20px; }
+  .item { margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+  .title { font-size: 18px; font-weight: bold; }
+  .url { font-size: 14px; color: green; }
+  .snippet { font-size: 14px; margin-top: 5px; }
+  input { width: 80%; padding: 10px; font-size: 18px; }
+  button { padding: 10px 20px; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<h1>Utopia</h1>
+<input id="q" placeholder="検索ワードを入力">
+<button onclick="search()">検索</button>
+
+<div id="results"></div>
+
+<script>
+async function search() {
+  const q = document.getElementById("q").value;
+  const url = "https://api.duckduckgo.com/?q=" + encodeURIComponent(q) + "&format=json&no_redirect=1";
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = "";
+
+  // Wikipedia 的な要約
+  if (data.AbstractText) {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div class="title">${data.Heading}</div>
+      <div class="snippet">${data.AbstractText}</div>
+      <div class="url">${data.AbstractURL}</div>
+    `;
+    resultsDiv.appendChild(div);
+  }
+
+  // 関連トピック
+  if (data.RelatedTopics) {
+    data.RelatedTopics.forEach(item => {
+      if (item.Text && item.FirstURL) {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="title"><a href="${item.FirstURL}" target="_blank">${item.Text}</a></div>
+          <div class="url">${item.FirstURL}</div>
+        `;
+        resultsDiv.appendChild(div);
+      }
+    });
+  }
+}
+</script>
+
+</body>
+</html>
